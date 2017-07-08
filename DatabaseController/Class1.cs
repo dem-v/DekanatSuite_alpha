@@ -1,10 +1,13 @@
 ﻿using System;
+using Realms;
 using System.Data;
 using System.Data.Linq;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using static DatabaseDefinitionAndStorage.DatabaseRealm;
 
 namespace DatabaseController
 {
@@ -28,7 +31,7 @@ namespace DatabaseController
         public class StudentList
         {
 
-            public static int GetIDByName(string fam, string fir, string fath, int grade, int group)
+            public static int GetIDByName(Realm realm, string fam, string fir, string fath, int grade, int groupid)
             {
                 /*
                 //TODO:This works. Now back to LINQ!!!
@@ -93,8 +96,12 @@ namespace DatabaseController
                     }
                 }*/
 
-
-
+                var firstOrDefault = realm
+                    .All<Students>().FirstOrDefault(p => p.FamilyName == fam && p.FirstName == fir && p.FathersName == fath &&
+                                p.Grade == grade && p.GroupID == groupid);
+                if (firstOrDefault != null)
+                    return firstOrDefault.StudID;
+                return -1;
             }
         }
     }
@@ -106,5 +113,19 @@ namespace DatabaseController
                 return Regex.Replace(str, @"[^\w\d\s]", "").ToLowerInvariant();
             }
         }
+
+    internal class OperatingOnRealm
+    {
+        public static Realm CreateOrOpenRealmDB()
+        {
+            if (!File.Exists("current.realm"))
+            {
+                RealmConfiguration rc = new RealmConfiguration("current.realm");
+                return Realm.GetInstance(rc);
+            }
+            return Realm.GetInstance("current.realm");
+        }
+
+    }
     
 }

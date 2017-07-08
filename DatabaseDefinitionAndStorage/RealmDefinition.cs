@@ -3,7 +3,7 @@ using System;
 
 namespace DatabaseDefinitionAndStorage
 {
-    public class Class1
+    public class DatabaseRealm
     {
         public class Students : RealmObject
         {
@@ -13,7 +13,7 @@ namespace DatabaseDefinitionAndStorage
             public string FirstName { get; set; }
             public string FathersName { get; set; }
             public int Grade { get; set; }
-            public int Group { get; set; }
+            public int GroupID { get; set; }
             public string PhoneNumber { get; set; }
             public string TypeOfEducation { get; set; }
             public string OrderOfAcceptance { get; set; }
@@ -27,10 +27,20 @@ namespace DatabaseDefinitionAndStorage
             public string FirstName { get; set; }
             public string FathersName { get; set; }
             public DateTimeOffset DateOfBirth { get; set; }
-            public string EMail { get; set; }
+            private string _EMail { get; set; }
             public string PhoneNumber { get; set; }
             public string Relation { get; set; }
             public int RelationToStudID { get; set; }
+
+            public string EMail
+            {
+                get { return _EMail; }
+                set
+                {
+                    if (!value.Contains("@")) throw new Exception("Invalid e-mail adress");
+                    _EMail = value;
+                }
+            }
         }
 
         public class RequestsForPermission : RealmObject
